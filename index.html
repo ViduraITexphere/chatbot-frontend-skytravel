@@ -22,7 +22,7 @@
       }
 
       #container-wrapper {
-        max-width: 600px;
+        max-width: 1200px;
         margin: 0 auto;
         padding: 30px;
         background-color: rgb(235, 235, 235);
@@ -65,11 +65,13 @@
       }
 
       #chat-history {
-        max-height: 200px; /* Set a max-height for scrolling */
-        overflow-y: auto;
-        margin-bottom: 10px;
-        padding-right: 5px;
-      }
+    max-height: 200px; /* Set a max-height for scrolling */
+    min-height: 50px; /* Set a min-height to ensure scrollbar appears with one message */
+    overflow-y: auto; /* Enable vertical scrolling */
+    margin-bottom: 10px;
+    padding-right: 5px;
+}
+
 
       #chat-form {
         display: flex;

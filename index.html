@@ -165,14 +165,20 @@
     </div>
 
     <script>
-        // Function to format response in bullet points or numbered lists
+        // Function to format only sections that are divided by stars into bullet points
         function formatBotMessage(botMessage) {
-            const listItems = botMessage.split('\n').map(item => {
-                if (item.trim() !== "") {
-                    return `<li>${item.trim()}</li>`;
+            // Split the message based on '*'
+            const messageSections = botMessage.split('*').map(section => section.trim());
+
+            // Format only non-empty sections into list items if they are separated by stars
+            const formattedMessage = messageSections.map(section => {
+                if (section) {
+                    return `<li>${section}</li>`;
                 }
-            }).join(""); // Joining all list items together
-            return `<ul>${listItems}</ul>`;
+                return '';
+            }).join("");
+
+            return `<ul>${formattedMessage}</ul>`;
         }
 
         const chatHistory = document.getElementById("chat-history");
@@ -201,7 +207,7 @@
                 const data = await response.json();
                 let botMessage = data.response;
 
-                // Format the bot message to bullet points
+                // Format only sections divided by '*' into bullet points
                 botMessage = formatBotMessage(botMessage);
 
                 // Add the user and bot messages to the chat history
@@ -225,5 +231,6 @@
         });
     </script>
 </body>
+
 
 </html>

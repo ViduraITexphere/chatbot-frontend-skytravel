@@ -165,20 +165,27 @@
     </div>
 
     <script>
-        // Function to format only sections that are divided by stars into numbered points
+        // Function to format bot messages into numbered points with sub-bullets and bold headings
         function formatBotMessage(botMessage) {
-            // Split the message based on '*'
-            const messageSections = botMessage.split('*').map(section => section.trim());
+            // Split the message into sections by the double asterisk '**' to identify main topics
+            const sections = botMessage.split('**').map(section => section.trim()).filter(Boolean);
 
-            // Format only non-empty sections into list items if they are separated by stars
-            const formattedMessage = messageSections.map(section => {
-                if (section) {
-                    return `<li>${section}</li>`;
-                }
-                return '';
-            }).join("");
+            // Initialize an array to hold formatted sections
+            const formattedSections = sections.map((section, index) => {
+                // Use the first line as the main topic and the rest as sub-items
+                const lines = section.split('\n').filter(line => line.trim() !== '');
 
-            return `<ol>${formattedMessage}</ol>`; // Change to ordered list
+                // Check if there are no lines to process
+                if (lines.length === 0) return '';
+
+                const mainTopic = `<strong>${lines[0]}</strong>`; // Make the first line a bold heading
+                const subItems = lines.slice(1).map(subItem => `<li>${subItem.trim()}</li>`).join('');
+
+                // Return the formatted section with numbering
+                return `<li>${mainTopic}<ul>${subItems}</ul></li>`;
+            }).join('');
+
+            return `<ol>${formattedSections}</ol>`; // Return the entire list as an ordered list
         }
 
         const chatHistory = document.getElementById("chat-history");
@@ -207,7 +214,7 @@
                 const data = await response.json();
                 let botMessage = data.response;
 
-                // Format only sections divided by '*' into numbered points
+                // Format sections into numbered points with bold headings and sub-bullets
                 botMessage = formatBotMessage(botMessage);
 
                 // Add the user and bot messages to the chat history
@@ -231,7 +238,4 @@
         });
     </script>
 </body>
-
-
-
 </html>

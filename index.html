@@ -165,7 +165,7 @@
     </div>
 
     <script>
-        // Function to format only sections that are divided by stars into bullet points
+        // Function to format only sections that are divided by stars into numbered points
         function formatBotMessage(botMessage) {
             // Split the message based on '*'
             const messageSections = botMessage.split('*').map(section => section.trim());
@@ -178,7 +178,7 @@
                 return '';
             }).join("");
 
-            return `<ul>${formattedMessage}</ul>`;
+            return `<ol>${formattedMessage}</ol>`; // Change to ordered list
         }
 
         const chatHistory = document.getElementById("chat-history");
@@ -207,7 +207,7 @@
                 const data = await response.json();
                 let botMessage = data.response;
 
-                // Format only sections divided by '*' into bullet points
+                // Format only sections divided by '*' into numbered points
                 botMessage = formatBotMessage(botMessage);
 
                 // Add the user and bot messages to the chat history
@@ -231,6 +231,7 @@
         });
     </script>
 </body>
+
 
 
 </html>

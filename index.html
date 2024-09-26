@@ -26,9 +26,10 @@
         max-width: 1200px;
         margin: 0 auto;
         padding: 30px;
-        background-color: rgb(248, 248, 248);
+        background-color: rgb(255, 255, 255);
         border-radius: 10px;
         position: relative;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       }
       /* Custom scrollbar styles */
       #chat-history::-webkit-scrollbar {
@@ -82,14 +83,27 @@
         flex: 1; /* Take remaining space */
         padding: 10px;
         font-size: 16px;
-        border: none;
+        border: solid 1px #e2e2e2; /* Example border */
         border-radius: 5px;
         margin-right: 10px;
         box-sizing: border-box; /* Include padding in width calculation */
       }
 
+      ::placeholder {
+        color: rgb(172, 172, 172);
+        opacity: 1; /* Firefox */
+      }
+      .search-icon {
+        filter: invert(100%) brightness(1000%);
+
+      }
+      input:focus {
+      border-color: #fdd6b1; /* Change to the desired border color */
+      outline: none; /* Remove the default outline */
+}
+
       button {
-        padding: 10px 20px;
+        padding: 8px 20px;
         font-size: 16px;
         border: none;
         border-radius: 5px;
@@ -125,7 +139,9 @@
         display: inline-block;
         white-space: nowrap;
         overflow: hidden;
-        animation: typing 1s steps(500, end) infinite; /* Loop the animation */
+        /* animation: typing 1s steps(500, end) infinite;  */
+        font-size: 24px;
+        font-weight: 600;
       }
     </style>
   </head>
@@ -133,12 +149,14 @@
     <div id="chatbot-container">
       <div id="container-wrapper">
         <div class="typing-animation">
-          <span>AI Search |</span>
+          <span>Ask Travel experts</span>
         </div>
         <div id="chat-history"></div>
         <form id="chat-form">
           <input type="text" id="user-input" placeholder="Enter your message" />
-          <button type="submit">Send</button>
+          <button type="submit" class="search-btn">
+            <img class="search-icon" src="search.svg" width="20px" alt="Send" />
+          </button>
         </form>
         <div id="loader">
           <img src="load.gif" width="50px" alt="Loading..." />

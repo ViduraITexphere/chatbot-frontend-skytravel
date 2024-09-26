@@ -165,27 +165,36 @@
     </div>
 
     <script>
-        // Function to format bot messages into numbered points with sub-bullets and bold headings
+        // Function to format bot messages into numbered points with bold headings for specific sections
         function formatBotMessage(botMessage) {
-            // Split the message into sections by the double asterisk '**' to identify main topics
+            // Split the message by the double asterisk '**'
             const sections = botMessage.split('**').map(section => section.trim()).filter(Boolean);
 
             // Initialize an array to hold formatted sections
-            const formattedSections = sections.map((section, index) => {
-                // Use the first line as the main topic and the rest as sub-items
-                const lines = section.split('\n').filter(line => line.trim() !== '');
+            const formattedSections = [];
 
-                // Check if there are no lines to process
-                if (lines.length === 0) return '';
+            sections.forEach((section, index) => {
+                // If the section is not the first one, prepend an ordered list item
+                if (index > 0) {
+                    // Use the first line as the main topic and the rest as sub-items
+                    const lines = section.split('\n').filter(line => line.trim() !== '');
 
-                const mainTopic = `<strong>${lines[0]}</strong>`; // Make the first line a bold heading
-                const subItems = lines.slice(1).map(subItem => `<li>${subItem.trim()}</li>`).join('');
+                    // Create a bold heading for the section
+                    const mainTopic = `<strong>${lines[0]}</strong>`; // Make the first line a bold heading
 
-                // Return the formatted section with numbering
-                return `<li>${mainTopic}<ul>${subItems}</ul></li>`;
-            }).join('');
+                    // Format the remaining lines as sub-items
+                    const subItems = lines.slice(1).map(subItem => `<li>${subItem.trim()}</li>`).join('');
 
-            return `<ol>${formattedSections}</ol>`; // Return the entire list as an ordered list
+                    // Push the formatted section into the array
+                    formattedSections.push(`<li>${mainTopic}<ul>${subItems}</ul></li>`);
+                } else {
+                    // For the first section, treat it as a plain paragraph (not numbered)
+                    formattedSections.push(section.trim());
+                }
+            });
+
+            // Return formatted output: combining plain text with an ordered list
+            return `<p>${formattedSections[0]}</p><ol>${formattedSections.slice(1).join('')}</ol>`;
         }
 
         const chatHistory = document.getElementById("chat-history");
@@ -214,7 +223,7 @@
                 const data = await response.json();
                 let botMessage = data.response;
 
-                // Format sections into numbered points with bold headings and sub-bullets
+                // Format sections into numbered points with bold headings
                 botMessage = formatBotMessage(botMessage);
 
                 // Add the user and bot messages to the chat history
@@ -238,4 +247,5 @@
         });
     </script>
 </body>
+
 </html>

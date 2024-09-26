@@ -1,152 +1,158 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <title>Chatbot</title>
     <style>
-      @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap");
+        @import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap");
 
-      body {
-        font-family: "DM Sans", sans-serif;
-        overflow: hidden; /* Prevent scrolling */
-        margin: 0; /* Reset default margin */
-        padding: 0; /* Reset default padding */
-      }
-
-      #chatbot-container {
-        width: 100%;
-        box-sizing: border-box;
-        background-size: cover;
-        background-repeat: no-repeat;
-        border-radius: 8px;
-        text-align: center; /* Center text */
-        /* height: 250px; */
-        height: 100vh;
-      }
-
-      #container-wrapper {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 30px;
-        background-color: rgb(255, 255, 255);
-        border-radius: 10px;
-        position: relative;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      }
-      /* Custom scrollbar styles */
-      #chat-history::-webkit-scrollbar {
-        width: 6px; /* Set the width of the scrollbar */
-      }
-
-      #chat-history::-webkit-scrollbar-thumb {
-        background-color: rgba(
-          0,
-          0,
-          0,
-          0.5
-        ); /* Set the color of the scrollbar thumb */
-        border-radius: 5px; /* Set the border radius of the thumb */
-      }
-
-      .bot-message,
-      .user-message {
-        border-radius: 10px;
-        margin-bottom: 5px;
-        font-size: 16px;
-        width: 100%;
-        padding: 10px;
-        box-sizing: border-box; /* Include padding in width calculation */
-      }
-
-      .bot-message {
-        background-color: #f8d8d8;
-        text-align: left;
-      }
-
-      .user-message {
-        background-color: #ebfdeb;
-        text-align: right;
-      }
-
-      #chat-history {
-        max-height: 70px; /* Set a max-height for scrolling */
-        overflow-y: auto;
-        margin-bottom: 10px;
-        padding-right: 5px;
-      }
-
-      #chat-form {
-        display: flex;
-        justify-content: space-between; /* Space out input and button */
-        align-items: center; /* Vertically center items */
-      }
-
-      input {
-        flex: 1; /* Take remaining space */
-        padding: 10px;
-        font-size: 16px;
-        border: solid 1px #e2e2e2; /* Example border */
-        border-radius: 5px;
-        margin-right: 10px;
-        box-sizing: border-box; /* Include padding in width calculation */
-      }
-
-      ::placeholder {
-        color: rgb(172, 172, 172);
-        opacity: 1; /* Firefox */
-      }
-      .search-icon {
-        filter: invert(100%) brightness(1000%);
-
-      }
-      input:focus {
-      border-color: #fdd6b1; /* Change to the desired border color */
-      outline: none; /* Remove the default outline */
-}
-
-      button {
-        padding: 8px 20px;
-        font-size: 16px;
-        border: none;
-        border-radius: 5px;
-        background-color: #ef8d31; /* Example color */
-        color: white; /* Text color */
-        cursor: pointer;
-      }
-
-      #loader {
-        display: none; /* Hide by default */
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-      }
-
-      /* Typing animation */
-      @keyframes typing {
-        from {
-          width: 0;
+        body {
+            font-family: "DM Sans", sans-serif;
+            overflow: hidden; /* Prevent scrolling */
+            margin: 0; /* Reset default margin */
+            padding: 0; /* Reset default padding */
         }
-        to {
-          width: 100%;
+
+        #chatbot-container {
+            width: 100%;
+            box-sizing: border-box;
+            background-size: cover;
+            background-repeat: no-repeat;
+            border-radius: 8px;
+            text-align: center; /* Center text */
+            height: 100vh; /* Full viewport height */
+            display: flex; /* Flexbox for child elements */
+            flex-direction: column; /* Stack children vertically */
         }
-      }
 
-      .typing-animation {
-        display: inline-block;
-        overflow: hidden;
-      }
+        #container-wrapper {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: rgb(255, 255, 255);
+            border-radius: 10px;
+            position: relative;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            flex: 1; /* Allow the wrapper to grow and fill available space */
+            display: flex; /* Ensure it can hold the iframe */
+            flex-direction: column; /* Stack children vertically */
+        }
 
-      .typing-animation span {
-        display: inline-block;
-        white-space: nowrap;
-        overflow: hidden;
-        /* animation: typing 1s steps(500, end) infinite;  */
-        font-size: 24px;
-        font-weight: 600;
-      }
+        iframe {
+            flex: 1; /* Allow iframe to grow and fill available space */
+            width: 100%; /* Full width */
+            border: none; /* Remove default border */
+        }
+
+        /* Custom scrollbar styles */
+        #chat-history::-webkit-scrollbar {
+            width: 6px; /* Set the width of the scrollbar */
+        }
+
+        #chat-history::-webkit-scrollbar-thumb {
+            background-color: rgba(0, 0, 0, 0.5); /* Set the color of the scrollbar thumb */
+            border-radius: 5px; /* Set the border radius of the thumb */
+        }
+
+        .bot-message,
+        .user-message {
+            border-radius: 10px;
+            margin-bottom: 5px;
+            font-size: 16px;
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box; /* Include padding in width calculation */
+        }
+
+        .bot-message {
+            background-color: #f8d8d8;
+            text-align: left;
+        }
+
+        .user-message {
+            background-color: #ebfdeb;
+            text-align: right;
+        }
+
+        #chat-history {
+            max-height: 70px; /* Set a max-height for scrolling */
+            overflow-y: auto;
+            margin-bottom: 10px;
+            padding-right: 5px;
+        }
+
+        #chat-form {
+            display: flex;
+            justify-content: space-between; /* Space out input and button */
+            align-items: center; /* Vertically center items */
+        }
+
+        input {
+            flex: 1; /* Take remaining space */
+            padding: 10px;
+            font-size: 16px;
+            border: solid 1px #e2e2e2; /* Example border */
+            border-radius: 5px;
+            margin-right: 10px;
+            box-sizing: border-box; /* Include padding in width calculation */
+        }
+
+        ::placeholder {
+            color: rgb(172, 172, 172);
+            opacity: 1; /* Firefox */
+        }
+
+        .search-icon {
+            filter: invert(100%) brightness(1000%);
+        }
+
+        input:focus {
+            border-color: #fdd6b1; /* Change to the desired border color */
+            outline: none; /* Remove the default outline */
+        }
+
+        button {
+            padding: 8px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #ef8d31; /* Example color */
+            color: white; /* Text color */
+            cursor: pointer;
+        }
+
+        #loader {
+            display: none; /* Hide by default */
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Typing animation */
+        @keyframes typing {
+            from {
+                width: 0;
+            }
+            to {
+                width: 100%;
+            }
+        }
+
+        .typing-animation {
+            display: inline-block;
+            overflow: hidden;
+        }
+
+        .typing-animation span {
+            display: inline-block;
+            white-space: nowrap;
+            overflow: hidden;
+            font-size: 24px;
+            font-weight: 600;
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <div id="chatbot-container">
         <div id="container-wrapper">
             <div class="typing-animation">
@@ -163,6 +169,11 @@
                 <img src="load.gif" width="50px" alt="Loading..." />
             </div>
         </div>
+        <iframe
+            id="chatbot-iframe"
+            src="https://chatbot-frontend-skytravel.vercel.app/?objectId=66f3c52af86d4f37e6f33aad"
+            frameborder="0"
+        ></iframe>
     </div>
 
     <script>
@@ -238,15 +249,10 @@
             }
         }
 
-        form.addEventListener("submit", (event) => {
-            event.preventDefault(); // Prevent form submission
-            const loader = document.getElementById("loader");
-            loader.style.display = "block"; // Show the loader
-            sendMessage().finally(() => {
-                loader.style.display = "none"; // Hide the loader after the message is sent
-            });
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+            sendMessage();
         });
     </script>
 </body>
-
 </html>

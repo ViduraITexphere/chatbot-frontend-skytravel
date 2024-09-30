@@ -208,38 +208,47 @@
       }
 
       // Fetch bot response and continue conversation
-      async function getBotResponse(userMessage, chatHistoryElement, loaderElement) {
-        try {
-          const queryString = window.location.search;
-          const urlParams = new URLSearchParams(queryString);
-          const objectId = urlParams.get("objectId");
+      // Fetch bot response and continue conversation
+async function getBotResponse(userMessage, chatHistoryElement, loaderElement) {
+  try {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const objectId = urlParams.get("objectId");
 
-          loaderElement.style.display = "block"; // Show loader
+    loaderElement.style.display = "block"; // Show loader
 
-          // Make API request
-          const response = await fetch(
-            `https://chatbot-backend-2.onrender.com/chat-history/${objectId}`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({ userInput: userMessage }),
-            }
-          );
-
-          const data = await response.json();
-          const botMessage = formatBotMessage(data.response);
-
-          // Append bot response to the chat history
-          chatHistoryElement.innerHTML += `<div class="bot-message">${botMessage}</div>`;
-          chatHistoryElement.scrollTop = chatHistoryElement.scrollHeight;
-        } catch (error) {
-          console.error("Error:", error);
-        } finally {
-          loaderElement.style.display = "none"; // Hide loader
-        }
+    // Make API request
+    const response = await fetch(
+      `https://chatbot-backend-2.onrender.com/chat-history/${objectId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ userInput: userMessage }),
       }
+    );
+
+    const data = await response.json();
+    console.log("API Response:", data); // Debugging: Log the response
+
+    // Check if the response contains the 'response' field
+    if (data && data.response) {
+      const botMessage = formatBotMessage(data.response);
+      chatHistoryElement.innerHTML += `<div class="bot-message">${botMessage}</div>`;
+    } else {
+      console.error("Empty or invalid response from API:", data);
+      chatHistoryElement.innerHTML += `<div class="bot-message">Sorry, something went wrong. Please try again.</div>`;
+    }
+
+    chatHistoryElement.scrollTop = chatHistoryElement.scrollHeight;
+  } catch (error) {
+    console.error("Error:", error);
+    chatHistoryElement.innerHTML += `<div class="bot-message">Error fetching the response. Please try again later.</div>`;
+  } finally {
+    loaderElement.style.display = "none"; // Hide loader
+  }
+}
 
       // Submit the form from the popup for a follow-up question
       popupForm.addEventListener("submit", (event) => {

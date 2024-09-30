@@ -35,7 +35,7 @@
       }
 
       #popup {
-        display: none; /* Hide initially */
+        display: none;
         position: fixed;
         top: 20%;
         left: 50%;
@@ -186,10 +186,13 @@
       const popupHistory = document.getElementById("chat-history-popup");
       const popupLoader = document.getElementById("popup-loader");
 
-      // Open popup when user submits question
-      form.addEventListener("submit", (event) => {
+      let lastUserMessage = ""; // To store the last question asked in the main chatbot
+
+      // Main chatbot form submit
+      form.addEventListener("submit", async (event) => {
         event.preventDefault();
-        openPopup();
+        lastUserMessage = userInput.value; // Capture the last user message
+        openPopup(lastUserMessage); // Pass the question to popup
       });
 
       // Close popup
@@ -197,15 +200,23 @@
         popup.style.display = "none";
       });
 
-      async function sendMessage(container, input, loader, chatHistory) {
-        const userMessage = input.value;
-        input.value = ""; // Clear input field
+      // Function to open popup and continue the conversation
+      function openPopup(initialMessage) {
+        popup.style.display = "block";
+        popupHistory.innerHTML = `<div class="user-message">${initialMessage}</div>`; // Show initial user message
+        getBotResponse(initialMessage, popupHistory, popupLoader); // Fetch the bot's response
+      }
+
+      // Fetch bot response and continue conversation
+      async function getBotResponse(userMessage, chatHistoryElement, loaderElement) {
         try {
           const queryString = window.location.search;
           const urlParams = new URLSearchParams(queryString);
           const objectId = urlParams.get("objectId");
 
-          loader.style.display = "block"; // Show loader
+          loaderElement.style.display = "block"; // Show loader
+
+          // Make API request
           const response = await fetch(
             `https://chatbot-backend-2.onrender.com/chat-history/${objectId}`,
             {
@@ -218,28 +229,27 @@
           );
 
           const data = await response.json();
-          let botMessage = formatBotMessage(data.response);
+          const botMessage = formatBotMessage(data.response);
 
-          chatHistory.innerHTML += `<div class="user-message">${userMessage}</div>`;
-          chatHistory.innerHTML += `<div class="bot-message">${botMessage}</div>`;
-
-          chatHistory.scrollTop = chatHistory.scrollHeight;
+          // Append bot response to the chat history
+          chatHistoryElement.innerHTML += `<div class="bot-message">${botMessage}</div>`;
+          chatHistoryElement.scrollTop = chatHistoryElement.scrollHeight;
         } catch (error) {
           console.error("Error:", error);
         } finally {
-          loader.style.display = "none"; // Hide loader
+          loaderElement.style.display = "none"; // Hide loader
         }
       }
 
-      function openPopup() {
-        popup.style.display = "block";
-      }
-
+      // Submit the form from the popup for a follow-up question
       popupForm.addEventListener("submit", (event) => {
         event.preventDefault();
-        sendMessage(popup, document.getElementById("user-input-popup"), popupLoader, popupHistory);
+        const popupUserMessage = document.getElementById("user-input-popup").value;
+        popupHistory.innerHTML += `<div class="user-message">${popupUserMessage}</div>`;
+        getBotResponse(popupUserMessage, popupHistory, popupLoader); // Fetch response for the follow-up question
       });
 
+      // Helper function to format bot messages
       function formatBotMessage(botMessage) {
         const sections = botMessage.split('**').map(section => section.trim()).filter(Boolean);
         const formattedSections = [];
@@ -248,14 +258,12 @@
           if (index > 0) {
             const lines = section.split('\n').filter(line => line.trim() !== '');
             const mainTopic = `<strong>${lines[0]}</strong>`;
-            const subItems = lines.slice(1).map(subItem => `<li>${subItem.trim()}</li>`).join('');
-            formattedSections.push(`<li>${mainTopic}<ul>${subItems}</ul></li>`);
-          } else {
-            formattedSections.push(section.trim());
+            const subtopics = lines.slice(1).map(line => `<p>${line}</p>`).join('');
+            formattedSections.push(`${mainTopic}${subtopics}`);
           }
         });
 
-        return `<p>${formattedSections[0]}</p><ol>${formattedSections.slice(1).join('')}</ol>`;
+        return formattedSections.join('');
       }
     </script>
   </body>

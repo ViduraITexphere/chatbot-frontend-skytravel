@@ -235,7 +235,8 @@ async function getBotResponse(userMessage, chatHistoryElement, loaderElement) {
     // Check if the response contains the 'response' field
     if (data && data.response) {
       const botMessage = formatBotMessage(data.response);
-      chatHistoryElement.innerHTML += `<div class="bot-message">${botMessage}</div>`;
+      chatHistoryElement.innerHTML += `<div class="bot-message">${data.response}</div>`;
+
     } else {
       console.error("Empty or invalid response from API:", data);
       chatHistoryElement.innerHTML += `<div class="bot-message">Sorry, something went wrong. Please try again.</div>`;
